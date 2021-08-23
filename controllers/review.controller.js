@@ -154,6 +154,7 @@ function loanReview(req,res){
         if(err){
             return res.status8500.send({message: "Error al buscar revista"});
         }else if(reviewFinded){
+            let countReview = reviewFinded.count + 1;
             let available = reviewFinded.available - 1;
             if(reviewFinded.available == 0){
                 return res.send({message: "Revista no disponible actualmente"});
@@ -162,6 +163,7 @@ function loanReview(req,res){
                     if(err){
                         return res.status(500).send({message: "Error al buscar usuario"});
                     }else if(userFinded){
+                        let count = userFinded.count + 1;
                         if(userFinded.reviews.includes(reviewId) == true){
                             return res.send({message: "Ya tiene esta revista"});
                         }else{
@@ -169,11 +171,11 @@ function loanReview(req,res){
                             if(reviewCount == 10){
                                 return res.send({message: "Solo se puede prestar un máximo de 10 revistas, devuélva una para poder prestar esta revista"});
                             }else{
-                                User.findByIdAndUpdate(userId,{$push: {reviews: reviewId, history_reviews: reviewId}}, {new: true}, (err, userUpdated)=>{
+                                User.findByIdAndUpdate(userId,{$push: {reviews: reviewId, history_reviews: reviewId}, count: count}, {new: true}, (err, userUpdated)=>{
                                     if(err){
                                         return res.status(500).send({message: "Error al agregar revista a su cuenta"});
                                     }else if(userUpdated){
-                                        Review.findByIdAndUpdate(reviewId,{available: available},{new:true},(err, reviewUpdated)=>{
+                                        Review.findByIdAndUpdate(reviewId,{available: available, count: countReview},{new:true},(err, reviewUpdated)=>{
                                             if(err){
                                                 return res.status(500).send({message: "Error al actualizar revista"});
                                             }else if(reviewUpdated){

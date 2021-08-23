@@ -153,6 +153,7 @@ function loanBook(req,res){
             return res.status8500.send({message: "Error al buscar libro"});
         }else if(bookFinded){
             let available = bookFinded.available - 1;
+            let countBook = bookFinded.count + 1;
             if(bookFinded.available == 0){
                 return res.send({message: "Libro no disponible actualmente"});
             }else{
@@ -163,6 +164,7 @@ function loanBook(req,res){
                         if(userFinded.books.includes(bookId) == true){
                             return res.send({message: "Ya tiene este libro"});
                         }else{
+                            let count = userFinded.count + 1;
                             let booksCount = userFinded.books.length;
                             /* let booksCount = 0;
                             userFinded.books.forEach(element => {
@@ -171,11 +173,11 @@ function loanBook(req,res){
                             if(booksCount == 10){
                                 return res.send({message: "Solo se puede prestar un máximo de 10 libros, devuélva uno para poder prestar este libro"});
                             }else{
-                                User.findByIdAndUpdate(userId,{$push: {books: bookId, history_books: bookId}}, {new: true}, (err, userUpdated)=>{
+                                User.findByIdAndUpdate(userId,{$push: {books: bookId, history_books: bookId}, count: count}, {new: true}, (err, userUpdated)=>{
                                     if(err){
                                         return res.status(500).send({message: "Error al agregar libro a su cuenta"});
                                     }else if(userUpdated){
-                                        Book.findByIdAndUpdate(bookId,{available: available},{new:true},(err, bookUpdated)=>{
+                                        Book.findByIdAndUpdate(bookId,{available: available, count: countBook},{new:true},(err, bookUpdated)=>{
                                             if(err){
                                                 return res.status(500).send({message: "Error al actualizar libro"});
                                             }else if(bookUpdated){

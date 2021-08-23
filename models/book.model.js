@@ -11,7 +11,8 @@ var bookSchema = Schema({
     description: String,
     topics: [String],
     copies: Number,
-    available: Number
+    available: Number,
+    count: {type: Number, default: 0}
 });
 
 module.exports = mongoose.model('book', bookSchema);
